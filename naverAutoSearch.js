@@ -1,7 +1,9 @@
 ﻿
 // 네이버 연관검색어 자동 수행
+
 // 최초작성: 2018-10-03 by 닥터마시리트
-// 사용예) @JS(https://cdn.rawgit.com/Dr-Mashirito/sming/master/naverAutoSearch.js){ "keywords": [ ["홍길동", "홍길동 아빠"], ["홍길동", "홍길동 엄마"] ] }
+// 사용예) @JS(https://cdn.rawgit.com/Dr-Mashirito/sming/master/naverAutoSearch.js){ "검색어세트들": [ ["홍길동", "홍길동 아빠"], ["홍길동", "홍길동 엄마"] ] }
+
 async function main(arg) {
 
 	var 검색어세트들 = arg.검색어세트들;	// 검색어세트가 여러개 담긴 배열
@@ -93,7 +95,7 @@ async function do검색(검색어세트) {
 		var 검색버튼 = $(네이버창.document).find('form[name="search"] button[type=submit]')[0];
 		검색버튼.click();
 		await sming.wait(1000);
-		
+
 		// 스크린샷
 		if (i == 0) {
 			var 스샷파일명 = await sming.saveScreenshot("winNaver");		// 임시스샷 저장 1

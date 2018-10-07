@@ -1,14 +1,61 @@
 ﻿
 // 스밍봇 api 부트스트랩 스크립트
 // 최초작성: 2018-10-03 by 닥터마시리트
+// 수정사항: 스크립트에 의해 열리는 모든 창에 sming 전역변수 등록 (2018-10-07 by 닥터마시리트)
 class SmingApi {
 
 	constructor() {
 		if (SmingApi._instance) return SmingApi._instance;
 
-		this.ver = '1.0';
+		this.ver = '1.1';
 		this._invokeQueue = [];
-		SmingApi._instance = this;
+		this._windows = [];
+		this._mainWindow = window;
+
+		// 관리되는 window 목록에 이 창을 추가
+		this._customizeWindow(this._mainWindow);
+
+		setInterval(() => {
+			for (let i = this._windows.length - 1; i >= 0; i--) {
+				if (this._windows[i].closed) {
+					this._windows.splice(i, 1);
+				} else {
+					this._customizeWindow(this._windows[i]);
+				}
+			}
+		}, 10);
+
+		//SmingApi._instance = this;
+	}
+
+	// 윈도 개조의 용광로
+	_customizeWindow(winObj) {
+		if (!winObj.sming) {
+			winObj.sming = this;
+
+			// open함수 오버라이드
+			winObj.open = function (openNative) {
+				return function (url, name, features) {
+					const winOpened = openNative.call(window, url, name, features);
+					window.sming._customizeWindow(winOpened);
+
+					return winOpened;
+				};
+			}(winObj.open);
+
+			// moveTo함수 오버라이드
+			if ('moveWindow' in this) {
+				winObj.moveTo = function (wo) {
+					return function (x, y) {
+						wo.sming.moveWindow(wo.name, x, y);
+					};
+				}(winObj);
+			}
+		}
+
+		if (this._windows.indexOf(winObj) === -1) {
+			this._windows.push(winObj);
+		}
 	}
 
 	// script에서 호출
@@ -104,6 +151,4 @@ class SmingApi {
 	};
 };
 
-SmingApi._instance = null;	// static
-
-window.sming = new SmingApi();
+SmingApi._instance = new SmingApi();	// static
