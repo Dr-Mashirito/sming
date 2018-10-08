@@ -2,8 +2,8 @@
 // 네이버 연관검색어 자동 수행
 
 // 최초작성: 2018-10-06 by 닥터마시리트
-// 사용예 1) @JS(https://cdn.rawgit.com/Dr-Mashirito/sming/master/naverAuto.js){ "주검색어": "시타오 미우", "연관검색어": [ ["시타오 미우 농어촌"], ["시타오 미우 선발"] ] }
-// 사용예 2) @JS(https://cdn.rawgit.com/Dr-Mashirito/sming/master/naverAuto.js){ "주검색어": "시타오 미우", "연관검색어": [ ["시타오 미우 농어촌", "애칭 붙은 이유는", "시골소녀의 재발견"], ["시타오 미우 선발@뉴스", "http://www.getnews.co.kr/news/articleView.html?idxno=92822", "문우상 기자"] ], "대기시간": 12 }
+// 사용예 1) @JS(https://rawgit.com/Dr-Mashirito/sming/master/naverAuto.js){ "주검색어": "시타오 미우", "연관검색어": [ ["시타오 미우 농어촌"], ["시타오 미우 선발"] ] }
+// 사용예 2) @JS(https://rawgit.com/Dr-Mashirito/sming/master/naverAuto.js){ "주검색어": "시타오 미우", "연관검색어": [ ["시타오 미우 농어촌", "애칭 붙은 이유는", "시골소녀의 재발견"], ["시타오 미우 선발@뉴스", "http://www.getnews.co.kr/news/articleView.html?idxno=92822", "문우상 기자"] ], "대기시간": 12 }
 
 async function main(arg) {
 
