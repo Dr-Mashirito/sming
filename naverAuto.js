@@ -70,7 +70,7 @@ async function do연관검색세트(주검색어, 연관검색어, 카테고리,
 	// 네이버창 열기
 	popupLeft += 360;
 	if (1920 < (popupLeft + 370)) {
-		popupLeft = 10;
+		popupLeft = 370;
 	}
 
 	var winObj = window.open("https://m.naver.com", winName, `width=360,height=640,resizable`);	//,top=${popupTop},left=${popupLeft}`);
