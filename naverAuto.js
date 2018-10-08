@@ -2,10 +2,15 @@
 // 네이버 연관검색어 자동 수행
 
 // 최초작성: 2018-10-06 by 닥터마시리트
-// 사용예 1) @JS(...){ "주검색어": "시타오 미우", "연관검색어": [ ["시타오 미우 농어촌"], ["시타오 미우 선발"] ] }
-// 사용예 2) @JS(...){ "주검색어": "시타오 미우", "연관검색어": [ ["시타오 미우 농어촌", "애칭 붙은 이유는", "시골소녀의 재발견"], ["시타오 미우 선발@뉴스", "http://www.getnews.co.kr/news/articleView.html?idxno=92822", "문우상 기자"] ], "대기시간": 8 }
+// 사용예 1) @JS(https://cdn.rawgit.com/Dr-Mashirito/sming/master/naverAuto.js){ "주검색어": "시타오 미우", "연관검색어": [ ["시타오 미우 농어촌"], ["시타오 미우 선발"] ] }
+// 사용예 2) @JS(https://cdn.rawgit.com/Dr-Mashirito/sming/master/naverAuto.js){ "주검색어": "시타오 미우", "연관검색어": [ ["시타오 미우 농어촌", "애칭 붙은 이유는", "시골소녀의 재발견"], ["시타오 미우 선발@뉴스", "http://www.getnews.co.kr/news/articleView.html?idxno=92822", "문우상 기자"] ], "대기시간": 12 }
 
 async function main(arg) {
+
+	// 인자 체크
+	if (!arg) throw '연검작업용 파라메터가 존재하지 않습니다.';
+	if (!arg.주검색어) throw '주검색어가 올바르게 설정되지 않았습니다.';
+	if (!arg.연관검색어 || !arg.연관검색어.length) throw '연관검색어가 올바르게 설정되지 않았습니다.';
 
 	var 주검색어 = arg.주검색어;		// "시타오 미우"
 	var 대기시간 = arg.대기시간 || 10;	// 10
@@ -65,9 +70,7 @@ async function do연관검색세트(주검색어, 연관검색어, 카테고리,
 	// 네이버창 열기
 	popupLeft += 360;
 	if (1920 < (popupLeft + 370)) {
-		popupTop += 400;
-		popupLeft = 360;
-		if (1080 < (popupTop + 400)) popupTop = 10;
+		popupLeft = 10;
 	}
 
 	var winObj = window.open("https://m.naver.com", winName, `width=360,height=640,resizable`);	//,top=${popupTop},left=${popupLeft}`);
@@ -84,7 +87,15 @@ async function do연관검색세트(주검색어, 연관검색어, 카테고리,
 
 	// 카테고리가 지정되었다면
 	if (카테고리) {
-		var 카테고리링크 = $(winObj.document).find('#_sch_tab li > a[role=tab]:contains(' + 카테고리 + ')')[0];
+		//var 카테고리링크 = $(winObj.document).find('#_sch_tab li > a[role=tab]:contains(' + 카테고리 + ')')[0];
+
+		// 2018.10.08 카테고리 선택불안 수정
+		var 카테고리링크;
+		for (let j = 0; j < 10; j++) {
+			카테고리링크 = $(winObj.document).find('a[role=tab]:contains(' + 카테고리 + ')')[0];
+			if (카테고리링크) break;
+			await 300;
+		}
 
 		if (!카테고리링크) throw '잘못된 카테고리명: ' + 카테고리;
 
@@ -97,7 +108,7 @@ async function do연관검색세트(주검색어, 연관검색어, 카테고리,
 	// 클릭가능한 후보링크들 수집
 	var $boxes = $(winObj.document).find('div.api_subject_bx li.bx');
 
-	if (링크후보단어들.length > 0) {
+	if (링크후보단어들 && 링크후보단어들.length > 0) {
 		var boxesFiltered = [];
 
 		for (var i = 0; i < 링크후보단어들.length; i++) {
@@ -118,7 +129,7 @@ async function do연관검색세트(주검색어, 연관검색어, 카테고리,
 		.filter(function (idx) { return this.innerHTML.indexOf('api_txt_lines') !== -1 })
 		.toArray();
 
-	if (후보링크들.length == 0) throw '클릭할 수 있는 링크가 없습니다! (연관검색어: ' + 연관검색어 + ')';
+	if (!후보링크들 || 후보링크들.length === 0) throw '클릭할 수 있는 링크가 없습니다! (연관검색어: ' + 연관검색어 + ')';
 
 	// 후보들 중 랜덤 클릭
 	var sel = Math.floor((Math.random() * 후보링크들.length));
@@ -272,8 +283,10 @@ async function do네이버검색(winObj, 검색어) {
 
 // 무작위 섞기
 function shuffle(array) {
-	for (let i = array.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[array[i], array[j]] = [array[j], array[i]]; // eslint-disable-line no-param-reassign
+	if (array && array.length > 0) {
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]]; // eslint-disable-line no-param-reassign
+		}
 	}
 }
