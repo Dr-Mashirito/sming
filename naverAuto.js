@@ -2,7 +2,7 @@
 // 네이버 연관검색어 자동 수행
 
 // 최초작성: 2018-10-06 by 닥터마시리트
-// 수정: 2018-10-08 by 닥터마시리트
+// 최초작성: 2018-10-10 by 닥터마시리트
 // 사용예 1) @JS(https://rawgit.com/Dr-Mashirito/sming/master/naverAuto.js){ "주검색어": "시타오 미우", "연관검색어": [ ["시타오 미우 농어촌"], ["시타오 미우 선발"] ] }
 // 사용예 2) @JS(https://rawgit.com/Dr-Mashirito/sming/master/naverAuto.js){ "주검색어": "시타오 미우", "연관검색어": [ ["시타오 미우 농어촌", "애칭 붙은 이유는", "시골소녀의 재발견"], ["시타오 미우 선발@뉴스", "http://www.getnews.co.kr/news/articleView.html?idxno=92822", "문우상 기자"] ], "대기시간": 12 }
 
@@ -59,20 +59,21 @@ async function main(arg) {
 }
 
 var winCnt = 0;
-var popupTop = 10;
-var popupLeft = 10;
 
 // 연관검색세트 수행 함수
 async function do연관검색세트(주검색어, 연관검색어, 카테고리, 링크후보단어들, 대기시간) {
+
+	var popupTop = 10;
+	var popupLeft = 370 + ((winCnt % 3) * 360);
 
 	winCnt++;
 	var winName = "winNaver_" + winCnt;
 
 	// 네이버창 열기
-	popupLeft += 360;
-	if (1920 < (popupLeft + 370)) {
-		popupLeft = 370;
-	}
+	//popupLeft += 360;
+	//if (1920 < (popupLeft + 370)) {
+	//	popupLeft = 370;
+	//}
 
 	var winObj = window.open("https://m.naver.com", winName, `width=360,height=640,resizable`);	//,top=${popupTop},left=${popupLeft}`);
 	await sming.waitEvent(winObj, 'load');
