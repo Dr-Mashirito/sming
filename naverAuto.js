@@ -168,23 +168,40 @@ async function do스샷취합(taskContext) {
 		+ '</div>'
 	);
 
-	// 낙관이 있다면 반투명 div 추가
+	// 반투명 div 추가
+	var $stamp = $('<div />').css({
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		width: '100%',
+		height: '100%',
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+		zIndex: 9
+	}).appendTo($div);
+
+	// 짤시각
+	$('<span />')
+		.css({
+			top: '5px',
+			left: '10px',
+			padding: '5px 15px',
+			position: 'absolute',
+			borderRadius: '5px',
+			backgroundColor: 'white',
+			color: 'black',
+			fontSize: '15px',
+			fontWeight: 'bold',
+			opacity: 0.9
+		})
+		.text(formatDate(new Date()))
+		.appendTo($stamp);
+
+	// 낙관이 있다면 
 	var stampFile = await sming.getStampImageFileName();
 	if (stampFile) {
-		var $stamp = $('<div />').css({
-			position: 'absolute',
-			top: 0,
-			left: 0,
-			width: '100%',
-			height: '100%',
-			display: 'flex',
-			justifyContent: 'center',
-			alignItems: 'center',
-			opacity: 0.5,
-			zIndex: 9
-		});
-		$stamp.append('<img src="' + stampFile + '" />')
-		$stamp.appendTo($div);
+		$stamp.append('<img src="' + stampFile + '" style="opacity:0.8" />')
 	}
 
 	// 이 div를 화면에 표시
@@ -247,7 +264,7 @@ async function do네이버검색(winObj, 검색어) {
 	검색칸.focus();
 	await sming.wait(500);
 
-	return new Promise((resolve) => {
+	await new Promise((resolve) => {
 		$(winObj.document).ready(function () {
 
 			var arr타이핑 = 검색칸.value.split('').fill(String.fromCharCode(8));
@@ -275,13 +292,25 @@ async function do네이버검색(winObj, 검색어) {
 					// 검색버튼 클릭
 					var 검색버튼 = $(winObj.document).find('form[name="search"] button[type=submit]')[0];
 					검색버튼.click();
-					setTimeout(resolve, 1000);					
+					setTimeout(resolve, 1000);
 				}
 			}
 
 			keyTyping();
 		});
 	});
+
+	// 2018.10.10 검색결과 응답이 올때까지 대기
+	for (var i = 0; i < 20; i++) {
+		var t = $(winObj.document).find('head > title').text();
+		var groups = /(.+) \: 네이버/g.exec(t);
+
+		if (groups.length > 1 && groups[1].trim() === 검색어.trim()) return;
+
+		await sming.wait(500);
+	}
+
+	throw '네이버 검색에 대한 응답시간 초과';
 }
 
 // 무작위 섞기
@@ -293,3 +322,15 @@ function shuffle(array) {
 		}
 	}
 }
+
+// 날짜포멧
+function formatDate(date) {
+	var year = date.getFullYear();
+	var month = date.getMonth() + 1;
+	var day = date.getDate();
+
+	if (day < 10) day = '0' + day;
+	if (month < 10) month = '0' + month;
+
+	return `${year}-${month}-${day}`;
+};
