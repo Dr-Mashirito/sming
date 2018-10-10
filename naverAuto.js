@@ -2,7 +2,7 @@
 // 네이버 연관검색어 자동 수행
 
 // 최초작성: 2018-10-06 by 닥터마시리트
-// 최초작성: 2018-10-10 by 닥터마시리트
+// 수정: 모니터 최소해상도 1460에 맞춤. 카테고리 대기시간 10초로 늘림 (2018-10-10 by 닥터마시리트)
 // 사용예 1) @JS(https://rawgit.com/Dr-Mashirito/sming/master/naverAuto.js){ "주검색어": "시타오 미우", "연관검색어": [ ["시타오 미우 농어촌"], ["시타오 미우 선발"] ] }
 // 사용예 2) @JS(https://rawgit.com/Dr-Mashirito/sming/master/naverAuto.js){ "주검색어": "시타오 미우", "연관검색어": [ ["시타오 미우 농어촌", "애칭 붙은 이유는", "시골소녀의 재발견"], ["시타오 미우 선발@뉴스", "http://www.getnews.co.kr/news/articleView.html?idxno=92822", "문우상 기자"] ], "대기시간": 12 }
 
@@ -92,11 +92,12 @@ async function do연관검색세트(주검색어, 연관검색어, 카테고리,
 		//var 카테고리링크 = $(winObj.document).find('#_sch_tab li > a[role=tab]:contains(' + 카테고리 + ')')[0];
 
 		// 2018.10.08 카테고리 선택불안 수정
+		// 2018.10.10 카테고리 최대 10초까지 기다리도록
 		var 카테고리링크;
-		for (let j = 0; j < 10; j++) {
+		for (let j = 0; j < 20; j++) {
 			카테고리링크 = $(winObj.document).find('a[role=tab]:contains(' + 카테고리 + ')')[0];
 			if (카테고리링크) break;
-			await 300;
+			await 500;
 		}
 
 		if (!카테고리링크) throw '잘못된 카테고리명: ' + 카테고리;
