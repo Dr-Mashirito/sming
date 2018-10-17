@@ -97,7 +97,7 @@ async function do연관검색세트(주검색어, 연관검색어, 카테고리,
 		for (let j = 0; j < 20; j++) {
 			카테고리링크 = $(winObj.document).find('a[role=tab]:contains(' + 카테고리 + ')')[0];
 			if (카테고리링크) break;
-			await 500;
+			await sming.wait(500);
 		}
 
 		if (!카테고리링크) throw '잘못된 카테고리명: ' + 카테고리;
